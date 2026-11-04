@@ -17,8 +17,11 @@ When the user asks to append, update, or rebuild BTS_data.csv from plan workbook
 1. Inspect source files to confirm schema, sheet layout, and date coverage —
    see `references/source-schemas.md` and `references/actual-file-schema.md`.
 2. Choose `TARGET` from the data, not the actuals filename: plan sheet names and
-   actuals sheet names are day numbers, and an export dated D can serve a target
-   earlier than D.
+   actuals sheet names are day numbers. Do NOT assume the export date bounds the
+   target — a rolling export dated D can carry REAL day-sheets for targets on and
+   beyond D (e.g. a 10-27 export held populated sheets through 10-31). Verify each
+   day sheet actually holds data (count data rows / non-zero size quantities)
+   rather than trusting the filename date or assuming future sheets are empty.
 3. Copy the most recent date-specific script in `build/` (e.g. `append_bts_24oct.py`)
    rather than the original `append_bts_22oct.py`; it carries the latest fixes.
 4. Edit these fields in the new script:
@@ -64,3 +67,19 @@ When the user asks to append, update, or rebuild BTS_data.csv from plan workbook
   need explicit format hints.
 - The `DL` path must point to the directory holding the source files; it varies by session
   (`Downloads`, `AppData\Local\hermes\attachments`, etc.). Wrong path = file-not-found.
+- `dist/data/` is a LIVE working directory: backups/staging CSVs you place there may be
+  removed, and `BTS_data.csv` itself may be replaced or reverted between sessions. Before
+  acting on an existing `BTS_data.csv` — especially on a "redo"/modify request — re-read
+  it and confirm the expected state (row count, whether ActualTotalprs==PlanTotalprs,
+  Mix values) instead of assuming it is your last pipeline output.
+- The user's maintained `BTS_data.csv` may carry decimal `Mix` values that do NOT follow
+  the integer min(plan,actual) rule (thousands more mismatches than the pipeline's own
+  output). The 0-mismatch verification therefore applies to freshly-appended dates only,
+  not to the whole maintained file. When the user asks to edit a single column (set/cap
+  `ActualTotalprs`), change ONLY that column and leave Mix/BTS/Volume untouched unless
+  recomputation is explicitly requested — those columns carry the user's own semantics.
+  Verify a cap by re-checking "no row where actual > plan" rather than by the mix rule.
+- Appending a RANGE of days: generalize the newest per-day script to LOOP over `DAYS`
+  (plan sheet and actual sheet = str(day), target = f"2026-10-{day}") — read the base CSV
+  once, drop ALL target-day rows, accumulate `new_rows` across every day, then write once.
+  Confirm the range end: a rolling actual may serve targets beyond its own export date.
