@@ -1,0 +1,5 @@
+# Hermes profile sync — ignore transient / local state
+*.lock
+__pycache__/
+*.pyc
+.DS_Store
