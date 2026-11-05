@@ -76,7 +76,7 @@ plugins:
 model:
   # Default model to use (can be overridden with --model flag)
   # Both "default" and "model" work as the key name here.
-  default: "deepseek-v4.1-flash-1017"
+  default: "zai-org/GLM-5.3-Flash"
 
   # Inference provider selection:
   #   "auto"         - Auto-detect from credentials (default)
@@ -110,9 +110,9 @@ model:
   #
   # Can also be overridden for a single invocation with the --provider flag.
   api_mode: chat_completions
-  provider: inferx
-  base_url: https://model.inferx.net/endpoints/v1
-  key_env: HERMES_CUSTOM_INFERX_API_KEY
+  provider: dahl
+  base_url: https://inference.dahl.global/v1
+  key_env: HERMES_CUSTOM_DAHL_API_KEY
 kanban:
   review_dispatch: true
 
@@ -1888,7 +1888,7 @@ display:
 # consent, identity, retention, and deletion decisions.
   pet:
     enabled: true
-    slug: 'byte-bunny'
+    slug: 'doro-pink-pup'
     scale: 0.45
 telemetry:
   shared_metrics:
@@ -2245,27 +2245,5 @@ providers:
       MiniMaxAI/MiniMax-M2.7: {}
       deepseek-ai/DeepSeek-V4-Flash-0731: {}
     key_env: HERMES_CUSTOM_DAHL_API_KEY
-  inferx:
-    name: InferX
-    base_url: https://model.inferx.net/endpoints/v1
-    model: deepseek-v4.1-flash-1017
-    discover_models: true
-    models:
-      Agents-A1: {}
-      Devstral-2-123B-Instruct-2512-int4-AutoRound: {}
-      Qwen3-Coder-Next-FP8: {}
-      Qwen3.6-35B-A3B-FP8: {}
-      Qwen3.8-27B-FP8: {}
-      gemma-4-31B-it-fp8: {}
-      gpt-oss-20b: {}
-      deepseek-v4-flash-0731: {}
-      deepseek-v4.1-flash: {}
-      deepseek-v4.1-flash-1017: {}
-      deepseek-v4.1-flash-1017-basic: {}
-      glm-5.3: {}
-      glm-5.3-flash: {}
-      kimi-k3: {}
-      qwen3.8-max: {}
-    key_env: HERMES_CUSTOM_INFERX_API_KEY
 approvals:
   mode: "off"

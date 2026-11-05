@@ -25,6 +25,7 @@ Gmail, Calendar, Drive, Contacts, Sheets, and Docs — through Hermes-managed OA
 
 - `references/gmail-search-syntax.md` — Gmail search operators (is:unread, from:, newer_than:, etc.)
 - `references/daily-brief.md` — daily/morning brief procedure: schedule + conflicts + meeting prep + urgent mail from Gmail and Calendar. Load it when the user asks for a morning brief, meeting preparation, or "what's on my calendar and what email needs attention."
+- `references/sheets-via-logged-in-browser.md` — no-OAuth fallback for Sheets: read a tab via the same-origin gviz endpoint and write rows by clipboard-pasting in the signed-in browser over CDP. Use this when OAuth is not configured and `sheets.googleapis.com` returns `403 unregistered callers` for cookie-only sessions.
 
 ## Scripts
 
@@ -277,6 +278,13 @@ $GAPI sheets update SHEET_ID "Sheet1!A1:B2" --values '[["Name","Score"],["Alice"
 # Append rows
 $GAPI sheets append SHEET_ID "Sheet1!A:C" --values '[["new","row","data"]]'
 ```
+
+If OAuth is not configured (`setup.py --check` fails) and no Google connector
+is connected, do NOT call `sheets.googleapis.com` from the page with
+`credentials:'include'` — it returns `403 "Method doesn't allow unregistered
+callers"` for cookie-only sessions. Use
+`references/sheets-via-logged-in-browser.md` instead: gviz for reads,
+clipboard paste for writes, driven in the signed-in browser over CDP.
 
 ### Docs
 

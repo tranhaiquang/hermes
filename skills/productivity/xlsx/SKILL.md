@@ -155,7 +155,11 @@ Author the JSON spec with `write_file`, inspect script JSON output with
 2. **Read the reference files and extract a single data mapping.** Turn the source files into one name/value mapping for the target (e.g., the SEMI changeover items). Do not re-derive values from the template itself.
 3. **Fill the template, writing to a new derived file.** Set the data cells from the mapping; keep every formula, style, merged range, validation, and dropdown. Save as a new file (e.g., `<template>_<machine>.xlsx`) — never overwrite the original.
 4. **Verify before reporting.** Reload the output: zip integrity, key cells hold the reference values, formulas still present, `--recalc` applied. Open in LibreOffice only for a visual check.
-5. **Report the artifact path plus a short summary**; do not walk through the process.
+5. **Shape-based sheets need XML surgery, not openpyxl.** If the target sheet
+   contains a flowchart/diagram built from drawing shapes, follow
+   `references/drawing-shapes.md` (edit `xl/drawings/drawing1.xml` inside the
+   zip; openpyxl save would delete the shapes).
+6. **Report the artifact path plus a short summary**; do not walk through the process.
 
 ## Converting to PDF
 
@@ -189,9 +193,11 @@ LibreOffice or hand the file to the user unconverted.
 - **`data_only=True` then save** silently discards all formulas
   (cached values replace them). Never save a workbook loaded that way
   unless that is the goal.
-- **Loading strips charts/images**: openpyxl does not round-trip
-  charts, so editing a charted workbook and saving drops the charts.
-  Re-add charts after editing, or avoid re-saving charted files.
+- **Loading strips charts AND drawing shapes**: openpyxl does not round-trip
+  charts, so editing a charted workbook and saving drops the charts. Worse,
+  any shape-based flowchart (textboxes, connectors, process diagrams in
+  `xl/drawings/drawing*.xml`) is silently deleted on save. To edit shapes,
+  do zip surgery on `drawing1.xml` directly — `references/drawing-shapes.md`.
 - **openpyxl + many images can corrupt the file**: embedding >20
   images with openpyxl's `Image` has triggered Excel's repair dialog;
   prefer xlsxwriter's `insert_image()` for image-heavy workbooks.

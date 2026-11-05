@@ -87,6 +87,7 @@ JSON with `read_file`.
 | Append notes | `pptx_edit.py deck.pptx --append-notes N TEXT` |
 | Fill template | `pptx_from_template.py tpl.pptx out.pptx --values v.json` |
 | Render slide PNGs | `pptx_render.py deck.pptx --outdir DIR` |
+| Render slide PNGs via PowerPoint COM (no LibreOffice) | `powershell -File scripts/pptx_export_slides_com.ps1 -Spec spec.json` |
 
 ## Procedure
 
@@ -154,9 +155,36 @@ template with zero slides, delete existing ones afterward with
 with `soffice --headless` and splits it into one PNG per slide with
 `pdftoppm` (or `pdftocairo`). Output JSON lists the PNG paths — review
 each with `vision_analyze`. When either tool is missing the script exits
-0 with `{"rendered": false, "missing": [...]}` and guidance; fall back to
+0 with `{"rendered": false, "missing": [...]}` and guidance; on Windows with
+PowerPoint installed use the COM render path below, otherwise fall back to
 the JSON outline from `pptx_read.py`, which verifies content and
 structure, just not visuals.
+
+## Rendering slides to PNG on Windows (PowerPoint COM)
+
+When LibreOffice/poppler are absent but Microsoft PowerPoint is installed,
+render slides to PNG with PowerPoint's own COM API — the highest-fidelity
+option for design-heavy decks (certificates, brand slides), because it uses
+PowerPoint's real renderer instead of a substitute. Detect Office with:
+`powershell -NoProfile -Command "try{ $p=New-Object -ComObject PowerPoint.Application; $p.Version; $p.Quit() }catch{ 'NO_PPT' }"`.
+
+Run `scripts/pptx_export_slides_com.ps1 -Spec spec.json`, where spec.json is
+`[{"src":"<deck.pptx>","out":"<outdir>"}, ...]` written as UTF-8. The script
+opens each deck read-only and hidden, and for every slide calls
+`Slide.Export(path, "PNG", w, h)` where `w`/`h` are PIXELS =
+`PageSetup.SlideWidth/Height (points) * scale * 96/72` (scale 2 = 2×). It
+writes `slide-01.png`… into the out dir and prints one line per slide.
+
+Pitfalls for this path:
+- Keep non-ASCII paths OUT of the .ps1: put all paths in the UTF-8 JSON spec
+  and keep the script pure ASCII — Windows PowerShell 5.1 reads BOM-less
+  UTF-8 as ANSI and mangles non-ASCII path arguments.
+- `Presentations.Open(src, -1, 0, 0)` = ReadOnly, Untitled, no window; always
+  `Close()` + `Quit()` + `ReleaseComObject` in a `finally` so no orphan
+  POWERPNT.EXE is left running.
+- Verify by output file size and pixel dimensions (e.g. PIL
+  `Image.open(p).size`), not by exit code alone — a 0 exit with blank images
+  is possible if a font/render fault occurred.
 
 ## Converting to PDF
 
