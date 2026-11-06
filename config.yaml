@@ -76,7 +76,7 @@ plugins:
 model:
   # Default model to use (can be overridden with --model flag)
   # Both "default" and "model" work as the key name here.
-  default: "zai-org/GLM-5.3-Flash"
+  default: "openai/gpt-oss-120b"
 
   # Inference provider selection:
   #   "auto"         - Auto-detect from credentials (default)
@@ -110,9 +110,6 @@ model:
   #
   # Can also be overridden for a single invocation with the --provider flag.
   api_mode: chat_completions
-  provider: dahl
-  base_url: https://inference.dahl.global/v1
-  key_env: HERMES_CUSTOM_DAHL_API_KEY
 kanban:
   review_dispatch: true
 
@@ -1888,7 +1885,7 @@ display:
 # consent, identity, retention, and deletion decisions.
   pet:
     enabled: true
-    slug: 'doro-pink-pup'
+    slug: 'doro-pink-pup-2'
     scale: 0.45
 telemetry:
   shared_metrics:
@@ -2146,7 +2143,7 @@ providers:
   nvidia:
     name: NVIDIA
     base_url: https://integrate.api.nvidia.com/v1
-    model: mistralai/mistral-large-4-1t-a52b
+    model: stepfun-ai/step-5-preview
     discover_models: true
     models:
       01-ai/yi-large: {}
@@ -2235,15 +2232,5 @@ providers:
       z-ai/glm-5.3-flash: {}
       zyphra/zamba2-7b-instruct: {}
     key_env: HERMES_CUSTOM_NVIDIA_API_KEY
-  dahl:
-    name: Dahl
-    base_url: https://inference.dahl.global/v1
-    model: zai-org/GLM-5.3-Flash
-    discover_models: true
-    models:
-      zai-org/GLM-5.3-Flash: {}
-      MiniMaxAI/MiniMax-M2.7: {}
-      deepseek-ai/DeepSeek-V4-Flash-0731: {}
-    key_env: HERMES_CUSTOM_DAHL_API_KEY
 approvals:
   mode: "off"

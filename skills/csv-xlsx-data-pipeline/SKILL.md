@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [csv, xlsx, spreadsheet, data-pipeline, productivity]
     category: productivity
-    related_skills: [xlsx]
+    related_skills: [xlsx, synthetic-record-generation]
 ---
 # spreadsheet-data-pipeline
 
@@ -21,6 +21,8 @@ Use when the user asks to combine, filter, or re-shape data across a .csv and an
 - Reading an .xlsx and merging its data into a .csv data feed.
 - Filtering out specific rows (e.g., plant/type filters).
 - Mapping or renaming columns between two sources.
+
+For generating NEW synthetic batches into an existing governed CSV corpus (rather than transforming real data), see `synthetic-record-generation`.
 
 ## Procedure
 
