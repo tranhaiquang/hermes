@@ -1,9 +1,9 @@
 {
-  "last_report_path": "C:\\Users\\LEAN15\\AppData\\Local\\hermes\\logs\\curator\\20261030-052358",
-  "last_run_at": "2026-10-30T05:23:58.430588+00:00",
-  "last_run_duration_seconds": 1.579239,
+  "last_report_path": "C:\\Users\\LEAN15\\AppData\\Local\\hermes\\logs\\curator\\20261106-055656",
+  "last_run_at": "2026-11-06T05:56:56.277712+00:00",
+  "last_run_duration_seconds": 3.520039,
   "last_run_summary": "auto: no changes; llm: skipped (consolidation off)",
   "last_run_summary_shown_at": "2026-10-30T05:23:58.430588+00:00",
   "paused": false,
-  "run_count": 1
+  "run_count": 2
 }

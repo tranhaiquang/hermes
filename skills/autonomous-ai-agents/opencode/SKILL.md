@@ -135,6 +135,49 @@ terminal(command="opencode -s ses_abc123", workdir="~/project", background=true,
 | `--title <name>` | Name the session |
 | `--attach <url>` | Connect to a running opencode server |
 
+## Free models (verified $0)
+
+OpenCode's built-in catalog includes free-tier models under the `opencode/...-free` namespace. Verified in this environment:
+
+- `opencode/glm-5.3-flash-free` → responded `FREEMODEL_OK`, **$0 cost**, 7,108 tokens.
+
+Other free models in that namespace (select with `--model`):
+
+| Model | Verified |
+|---|---|
+| opencode/glm-5.3-flash-free | yes ($0) |
+| opencode/deepseek-v4.1-flash-free | - |
+| opencode/mimo-v2.6-flash-free | - |
+| opencode/crouton-alpha-free | - |
+| opencode/pulse-alpha-free | - |
+| opencode/flint-40b-free | - |
+
+Run one to confirm before trusting the catalog.
+
+## Default model
+
+Set the default model with a top-level `model` key in `~/.config/opencode/opencode.jsonc` (this applies to the TUI, the desktop app, and every `opencode run`):
+
+```jsonc
+{
+  "model": "opencode/glm-5.3-flash-free"
+}
+```
+
+For the OpenCode free models this needs no API key. A custom provider (e.g. `OxionAI`) can stay in the `provider` section for other models; only `model` needs to be set at the top level.
+
+## Server (opencode serve)
+
+For a long-running local server that other tools can connect to:
+
+```bash
+terminal(command="opencode serve", workdir="~", background=true, notify_on_complete=true)
+```
+
+- Binds 127.0.0.1:4096 and is password-protected; read the password from the log it writes.
+- `opencode serve` (no `--stdio`) is the server mode. `--stdio` is a different, non-server mode.
+- The `/v1` surface is password-authenticated (web UI plus authenticated API). If you point an external harness at it, confirm the exact model-id and auth scheme it expects first.
+
 ## Procedure
 
 1. Verify tool readiness:
