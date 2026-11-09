@@ -37,7 +37,7 @@ The SMED app uses a document-store approach: one table `smed_docs` with `jsonb` 
 
 1. Create a single document-store table `public.smed_docs` with columns `coll text`, `id text`, `data jsonb`, `updated_at timestamptz`.
 2. Define the primary key as `(coll, id)`:
-   - `create table public.smed_docs (coll text not null, id text not null, data jsonb not null default '{}'::jsonb, updated_at timestamptz not null default now(), constraint smed_docs_pkey primary key (coll, id))`;;
+   - `create table public.smed_docs (coll text not null, id text not null, data jsonb not null default '{}'::jsonb, updated_at timestamptz not null default now(), constraint smed_docs_pkey primary key (coll, id))`);
 3. Add indexes on `coll` and `(coll, id)`.
 4. Create a recursive `jsonb` merge function `public.smed_jsonb_merge(base jsonb, patch jsonb)` for deep merging.
 5. Create an upsert RPC `public.smed_patch(coll text, id text, patch jsonb)` that uses `on conflict (coll, id) do update set data = smed_jsonb_merge(public.smed_docs.data, excluded.data)`. This is used by `store.update()`.
@@ -120,15 +120,15 @@ The SMED app uses a document-store approach: one table `smed_docs` with `jsonb` 
 - **Full-table access overrides RLS**: the policies `smed_docs_read`, `smed_docs_insert`, `smed_docs_update`, `smed_docs_delete` grant `anon` + `authenticated` full access for pilot/internal. For production, disable these and use scoped RLS.
 - **`store.js` expects `db.doc()` / `db.collection()`**: the store calls these directly. Your adapter must expose the same thin wrappers around the Supabase JS client.
 - **`anonKey` must be real**: the placeholder `eyJhbG...Yf2M` blocks any Supabase write. Replace it with the real key from Supabase Dashboard → Project Settings → API before testing sync.
+- **CSS lives only in `index.html`'s `<style>` block** — `src/` holds JS only, there are no CSS files under `src/`. Make all style edits directly in `index.html`; grep `src/` first only to confirm.
+- **Treat `index.html` as the source of truth.** The `src/` ↔ `index.html` split/build round-trip is currently broken (`tools/build-app.mjs` expects a missing `index_split.html`; `tools/split-app.mjs` fails on stale per-file markers), so it cannot regenerate `index.html`. Apply JS changes to `index.html` and mirror them into the matching `src/` file by hand so the two do not drift.
+- **First `git push` on a fresh branch needs `--set-upstream origin main` once**; afterwards plain `git push` works.
 
 ## Common pitfalls
 
 - **Supabase client library is mandatory**: the CDN must load `supabase.min.js` **before** the inline script that calls `createClient()`. If you forget this, `window['supabase']` is undefined and the app silently falls back to local mode.
 - **Seed data must not shadow Supabase data**: `window.SMED_SEED` is the fallback input. When `window.SMED_DB` is set, `store.init()` should prefer Supabase. Keep the seed script intact (it is the offline fallback).
 - **LocalStorage vs Supabase**: `store.js` has `mode: 'local'` and `mode: 'cloud'`. The `init()` method decides. If `SMED_DB` is set, use cloud mode; otherwise use local.
-- **Full-table access overrides RLS**: the policies `smed_docs_read`, `smed_docs_insert`, `smed_docs_update`, `smed_docs_delete` grant `anon` + `authenticated` full access for pilot/internal. For production, disable these and use scoped RLS.
-- **`store.js` expects `db.doc()` / `db.collection()`**: the store calls these directly. Your adapter must expose the same thin wrappers around the Supabase JS client.
-
 ## When to Use
 
 Use this skill when the user needs to:

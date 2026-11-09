@@ -47,7 +47,9 @@ For generating NEW synthetic batches into an existing governed CSV corpus (rathe
 - **XLSX cell references include the row number** (`A4`, `B4`), not just the column letter — normalize keys to the letter group, otherwise lookups by bare column letter return `None`.
 - **XLSX dates are Excel serials** (days since 1899-12-31), not ISO dates — convert with `datetime.date(1899,12,31) + datetime.timedelta(days=n)`.
 - **Empty cells stay empty** — a missing `PM Date` serial maps to an empty `due_date`, not an exception.
+- **Large workbooks (>50MB): use `openpyxl` with `read_only=True`.** The `zipfile` + XML approach times out on 75MB files with 1M+ rows. `openpyxl.read_only` streams rows without loading the full sheet into memory.
 
-## references/column-mapping.md
+## References
 
-Decision table for xlsx → CSV column mapping.
+- `references/column-mapping.md` — Decision table for machine-data xlsx → CSV column mapping.
+- `references/qco-changeover-mapping.md` — Column mapping and extraction rules for QCO changeover tracking workbooks (`#11. QCO Data` sheet).

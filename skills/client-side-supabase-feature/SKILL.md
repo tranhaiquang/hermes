@@ -28,6 +28,10 @@ Use for feature additions, UI fixes, and client-side logic changes in an existin
 
 7. **Register i18n keys for every new user-facing string.** Place keys in the page's existing `SAMHO_LANG.register` block. Re-render new UI pieces inside the page's existing `samho:langchange` handler.
 
-8. **Syntax-check before declaring done.** Run `node --check "C:/path/to/file.js"` on any edited JS file. This catches mismatched braces from partial-file edits.
+9. **Syntax-check before declaring done.** Run `node --check "C:/path/to/file.js"` on any edited JS file. This catches mismatched braces from partial-file edits.
 
-9. **Role lookups must fall back to a dedicated permission table when DB returns no row.** `user_roles` may be missing a row due to seed drift or RLS mismatch. After the query, if the role is still unknown, query a dedicated table like `pm_validators` (columns: `user_id`, `display_name`) before defaulting to viewer. Never hardcode role lists in `supabase/config.js` — client config is for display constants only; permission membership belongs in a Supabase table so it can change without a code deploy.
+10. **Role lookups must fall back to a dedicated permission table when DB returns no row.** `user_roles` may be missing a row due to seed drift or RLS mismatch. After the query, if the role is still unknown, query a dedicated table like `pm_validators` (columns: `user_id`, `display_name`) before defaulting to viewer. Never hardcode role lists in `supabase/config.js` — client config is for display constants only; permission membership belongs in a Supabase table so it can change without a code deploy.
+
+11. **Rephrase the user's request with corrected grammar before acting, every time** (standing user preference — do it even when the request is already grammatical).
+
+12. **Mobile zoom fixes need all layers at once — see `references/mobile-safari-zoom.md`.** iOS Safari ignores `user-scalable=no` in the viewport meta tag; the CSS `touch-action` rule plus the ≥16px input rule are what actually stop pinch and focus zoom. Applying only the meta tag or only the JS gesture blockers leaves zoom working.
